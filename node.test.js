@@ -6185,8 +6185,8 @@ var $;
                 status: $mol_array_lottery(['NEW', 'WIP', 'DONE', 'FAIL', 'ABORT']),
                 created: $mol_stub_time().toString(),
                 updated: new $mol_time_moment().toString(),
-                start: $mol_stub_time().toString(),
-                end: $mol_stub_time().toString(),
+                start: $mol_stub_time().mask('0000-00-00').toString(),
+                end: $mol_stub_time().mask('0000-00-00').toString(),
                 duration: `P${Math.ceil(Math.random() * 365)}D`,
             });
         }
@@ -6212,10 +6212,10 @@ var $;
             return new $mol_time_moment(this.json(updated?.valueOf && { updated }).updated);
         }
         start(start) {
-            return new $mol_time_moment(this.json(start?.valueOf && { start }).start).mask('0000-00-00');
+            return new $mol_time_moment(this.json(start?.valueOf && { start }).start);
         }
         end(end) {
-            return new $mol_time_moment(this.json(end?.valueOf && { end }).end).mask('0000-00-00');
+            return new $mol_time_moment(this.json(end?.valueOf && { end }).end);
         }
         duration(duration) {
             return new $mol_time_duration(this.json(duration?.valueOf && { duration }).duration ?? 'P1D');
