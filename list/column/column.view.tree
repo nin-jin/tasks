@@ -1,0 +1,8 @@
+$my_tasks_list_column $mol_page
+	list $my_tasks_list
+	sort /string
+	filter *string
+	Body_content <= Tasks $mol_list
+		rows <= tasks /
+			<= Task*0 $my_tasks_task_row
+				task <= task* $my_tasks_task
