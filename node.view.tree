@@ -1,0 +1,134 @@
+$mol_scroll $mol_view
+	scroll_top? 0
+	scroll_left? 0
+	field *
+		^
+		tabIndex <= tabindex -1
+	event *
+		^
+		scroll?event <=> event_scroll?event null
+
+$mol_page $mol_view
+	dom_name \article
+	field *
+		^
+		tabIndex <= tabindex -1
+	sub /
+		<= Head $mol_view
+			minimal_height 64
+			dom_name \header
+			sub <= head /
+				<= Title $mol_view
+					dom_name \h1
+					sub <= title_content /
+						<= Logo null
+						<= title
+				<= Tools $mol_view
+					sub <= tools /$mol_view_content
+		<= Body $mol_scroll
+			scroll_top? => body_scroll_top?
+			sub <= body_content /
+				<= Body_content $mol_view
+					sub <= body /$mol_view
+		<= Foot $mol_view
+			dom_name \footer
+			sub <= foot /$mol_view
+
+$my_tasks_task_row $mol_view
+	minimal_height 104
+	minimal_width 104
+	task $my_tasks_task
+		kind => kind
+		title => title
+		description => description
+		assignee => assignee
+		status => status
+		start => task_start
+		duration => task_duration
+		end => task_end
+	sub /
+		<= Group $mol_view sub /
+			<= Main $mol_view sub /
+				<= Kind $mol_view sub / <= kind
+				<= Assignee $mol_view sub / <= assignee
+				<= Status $mol_view sub / <= status
+			<= Title $mol_view sub / <= title
+			<= Addon $mol_view sub /
+				<= Start $mol_view sub / <= start \
+				<= Duration $mol_view sub / <= duration \
+				<= End $mol_view sub / <= end \
+		<= Description $mol_view sub / <= description
+
+$mol_list $mol_view
+	render_visible_only true
+	render_over 0
+	sub <= rows /$mol_view
+	Empty $mol_view
+	Gap_before $mol_view style * paddingTop <= gap_before 0
+	Gap_after $mol_view style * paddingTop <= gap_after 0
+	view_window /
+		0
+		0
+
+$my_tasks_list_column $mol_page
+	list $my_tasks_list
+	sort /string
+	filter *string
+	Body_content <= Tasks $mol_list
+		rows <= tasks /
+			<= Task*0 $my_tasks_task_row
+				task <= task* $my_tasks_task
+
+$mol_book2 $mol_scroll
+	menu_title \
+	sub <= pages /$mol_view
+	minimal_width 0
+	Placeholder $mol_view
+	Gap* $mol_view title \
+
+$my_tasks_app $mol_page
+	title \10K Tasks with 10 Fields which are updated 10 times per second
+	auto /
+		<= updating null
+	filters /$my_tasks_column
+		*
+			title \All Tasks
+			sort /string
+				\-created
+			filter *string
+		*
+			title \Last Updated
+			sort /string
+				\-updated
+			filter *string
+		*
+			title \New Created
+			sort /string
+				\-created
+			filter *string
+				status \NEW
+		*
+			title \Deadline
+			sort /string
+				\+end
+			filter *string
+				status \WIP
+		*
+			title \Last Done
+			sort /string
+				\-end
+			filter *string
+				status \DONE
+		*
+			title \Big Fails
+			sort /string
+				\-duration
+			filter *string
+				status \FAIL
+	Body_content <= Columns $mol_book2
+		pages <= columns /
+			<= Column*all $my_tasks_list_column
+				title <= column_title* \All tasks
+				list <= list $my_tasks_list
+				sort <= column_sort* /string
+				filter <= column_filter* *string
